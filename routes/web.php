@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -17,39 +18,45 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-Route::controller(PageController::class)->group( function() {
+Route::view('/order_details', 'admin.pdf');
+Route::controller(PageController::class)->group(function () {
     Route::get('/', 'index')->name('page.index');
-    Route::get('redirect', 'redirect');
+    Route::get('/redirect', 'redirect')->middleware(['auth', 'verified']);
     Route::get('/products/{id}', 'singleProduct')->name('page.sproduct');
     Route::get('/search', 'search')->name('search');
     Route::get('/categorize', 'categorize')->name('categorize');
-    Route::post('/add_to_cart/product/{product:id}', 'addToCart')->name('to.cart');
-    Route::get('/checkout', 'checkout')->name('checkout');
-    Route::delete('/checkout/{cart:id}/remove', 'removeCart')->name('remove.cart');
-    Route::get('/clear-cart', 'clearCart')->name('clear.cart');
-    Route::get('/payment/cash-on', 'cashOn')->name('cash.on');
+
+    Route::middleware('auth')->group(function () {
+        Route::post('/add_to_cart/product/{product:id}', 'addToCart')->name('to.cart');
+        Route::post('/buy_now/product/{product:id}', 'buyNow')->name('buy.now');
+        Route::get('/checkout', 'checkout')->name('checkout');
+        Route::delete('/checkout/{cart:id}/remove', 'removeCart')->name('remove.cart');
+        Route::get('/clear-cart', 'clearCart')->name('clear.cart');
+        Route::get('/payment/cash-on', 'cashOn')->name('cash.on');
+    });
 });
 
 //Stripe Payment GateWay
-Route::controller(StripeController::class)->group(function() {
-    Route::get('stripe', 'stripe')->name('with.card');
-    Route::post('stripe/{total_amount}', 'stripePost')->name('stripe.post');
-
+Route::controller(StripeController::class)->middleware('auth')->group(function () {
+    Route::get('/stripe', 'stripe')->name('with.card');
+    Route::post('/stripe/{total_amount}', 'stripePost')->name('stripe.post');
 });
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
 //admin
-Route::get('/dashboard', [PageController::class, 'dashboard'])->middleware('auth', 'verified')->name('dashboard');
+Route::controller(DashboardController::class)->middleware('auth')->prefix('dashboard')->group(function () {
+    Route::get('/',  'dashboard')->name('dashboard');
+    Route::get('/users', 'userList')->name('users.list');
+    Route::get('/orders', 'orderList')->name('orders.list');
+    Route::put('/orders/{order:id}/deliever', 'deliever')->name('order.deliever');
+    Route::get('/orders/{order:id}/print', 'printOrder')->name('print.order');
+});
+
 
 //products
 Route::resource('/product', ProductController::class)->middleware('auth');
 
 //categories
-Route::controller(CategoryController::class)->prefix('category')->group( function() {
+Route::controller(CategoryController::class)->middleware('auth')->prefix('category')->group(function () {
     Route::get('/index', 'category_list')->name('category.list');
     Route::post('/create', 'store')->name('category.store');
     Route::get('/edit/{category:id}', 'edit')->name('category.edit');
@@ -63,7 +70,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/test', function() {
-   return view('checkout');
-});
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

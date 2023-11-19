@@ -10,12 +10,14 @@ setTimeout(function () {
 const plus = document.querySelector("#plus");
 const minus = document.querySelector("#minus");
 const quantity = document.querySelector("#quantity");
+const bQuantity = document.querySelector("#bQuantity");
 let result = parseInt(quantity.value);
 
 plus.addEventListener("click", function (e) {
     e.preventDefault();
     result += 1;
     quantity.value = result;
+    bQuantity.value = result;
 });
 
 minus.addEventListener("click", (e) => {
@@ -23,5 +25,7 @@ minus.addEventListener("click", (e) => {
     if (result > 0) {
         result -= 1;
         quantity.value = result;
+        bQuantity.value = result;
+
     }
 });

@@ -34,27 +34,33 @@
                     <h4 class="fw-light text-secondary text-decoration-line-through"> ${{ $product->price }} </h4>
                 @endif
             </div>
-            <form method="POST" action="{{ route('to.cart',$product->id) }}">
+
+            <p>
+                <span>Quantity: </span>
+            <form id="addToCartForm" method="POST" action="{{ route('to.cart', $product->id) }}">
                 @csrf
-                <p>
-                    <span>Quantity: </span>
-                    <span class="btn-group w-auto border border-2 ms-2">
-                        <button id="minus" class="btn btn-dark"> <i class="bi-dash"></i> </button>
-                        <input type="text" value="1" readonly name="quantity" id="quantity"
-                            style="width:55px;outline:none" class="ps-3" min="1" class="border-0">
-                        <button id="plus" class="btn btn-dark"> <i class="bi-plus"></i> </button>
-                    </span>
-                    @error('quantity')
-                        <p class="text-danger small"> {{$message}} </p>
-                    @enderror
-                </p>
-                <div class="d-flex my-3 mt-4">
-                    {{-- <button class="btn btn-outline-warning">Buy Now</button> --}}
-                    <button class="btn btn-outline-info ms-2">Add to Cart</button>
-                </div>
+                <span class="btn-group w-auto border border-2 ms-2">
+                    <button id="minus" class="btn btn-dark"> <i class="bi-dash"></i> </button>
+                    @csrf
+                    <input type="text" value="1" id="quantity" readonly name="quantity" style="width:55px;outline:none"
+                        class="ps-3 quantity" min="1" class="border-0">
+                    <button id="plus" class="btn btn-dark"> <i class="bi-plus"></i> </button>
+                </span>
             </form>
-
-
+            @error('quantity')
+                <p class="text-danger small"> {{ $message }} </p>
+            @enderror
+            </p>
+            <div class="d-flex my-3 mt-4">
+                <form action="{{route('buy.now',$product->id)}}" method="POST">
+                    @csrf
+                    <input type="hidden" name="quantity" id="bQuantity" value="1" min=1>
+                    <button class="btn btn-outline-warning">Buy Now</button>
+                </form>
+                <button id="addToCart" class="btn btn-outline-info ms-2">Add to Cart</button>
+            </div>
         </div>
     </div>
+
+    @vite('/resources/js/addToCart.js')
 @endsection

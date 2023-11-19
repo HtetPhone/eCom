@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\User;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules\Can;
 use Laravel\Ui\Presets\React;
 
 class PageController extends Controller
@@ -36,21 +34,6 @@ class PageController extends Controller
         $product = $id;
         return view('single-product', compact('product'));
     }
-
-    public function dashboard() 
-    {
-        $products = Product::all();
-        $users = User::where('role', 'user')->get();
-        $categories = Category::latest()->get();
-        $orders = Order::all();
-        return view('admin.dashboard', [
-            'products' => $products,
-            'users' => $users,
-            'categories' => $categories,
-            'orders' => $orders
-        ]);
-    }
-
 
     public function search(Request $request) 
     {   
@@ -98,8 +81,32 @@ class PageController extends Controller
             ]);
         }
 
-       return redirect()->route('checkout')->with(['message' => 'Product has been added to the cart']);;
+       return redirect()->back()->with(['message' => 'Product has been added to the cart']);
     }
+
+    public function buyNow(Request $request, Product $product) 
+    {
+        $request->validate([
+            'quantity' => 'required|min:1|gt:0'
+        ]);
+
+        if(Cart::where('product_id', $product->id)->exists()) {
+            $cart = Cart::where('product_id', $product->id)->first();
+            $newQuantity = $cart->quantity + $request->quantity;
+            $cart->update([
+                'quantity' => $newQuantity
+            ]);
+        }else {
+            Cart::create([
+                'user_id' => auth()->id(),
+                'product_id' => $product->id,
+                'quantity' => $request->quantity,
+            ]);
+        }
+
+       return redirect()->route('checkout');
+    }
+
 
     public function checkout() 
     {
@@ -128,6 +135,9 @@ class PageController extends Controller
     public function cashOn() 
     {
         $carts = Cart::where('user_id', auth()->id())->get();
+        if($carts->count() == 0) {
+            return redirect()->back()->with(['message' => 'You have nothing in the cart']);
+        }
         foreach($carts as $cart) {
             $total = $cart->product->d_price ? $cart->product->d_price * $cart->quantity : $cart->product->price * $cart->quantity;
             Order::create([
@@ -144,7 +154,7 @@ class PageController extends Controller
             $cart->delete();
         }
 
-        return redirect()->back()->with(['message' => 'Order has been sumbitted!']);
+        return redirect()->route('page.index')->with(['message' => 'Order has been sumbitted! Thanks for your purchase!']);
     }
 
 }

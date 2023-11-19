@@ -25,6 +25,9 @@ class StripeController extends Controller
 
      {
         $total_amount = $request->total_amount;
+        if($total_amount == 0) {
+         return redirect()->back()->with(['message' => 'You have nothing in the cart']);
+     }
         return view('stripe', compact('total_amount'));
         
      }
@@ -83,6 +86,6 @@ class StripeController extends Controller
             $cart->delete();
         }
 
-        return redirect()->route('checkout')->with(['message' => 'Order has been sumbitted!']);
+        return redirect()->route('page.index')->with(['message' => 'Order has been sumbitted! Thanks for your purchase!']);
      }
 }

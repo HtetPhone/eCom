@@ -20,5 +20,7 @@
 
     <a href="{{route('category.list')}}" class="list-group-item list-group-item-action"> <i class="bi bi-bookmark-star-fill text-warning"></i> Categories</a>
 
-    <a href="" class="list-group-item list-group-item-action"> <i class="bi bi-people-fill text-success"></i> Users</a>
+    <a href="{{route('users.list')}}" class="list-group-item list-group-item-action"> <i class="bi bi-people-fill text-success"></i> Users</a>
+
+    <a href="{{route('orders.list')}}" class="list-group-item list-group-item-action"> <i class="bi bi-stack text-danger"></i> Orders</a>
 </nav>
