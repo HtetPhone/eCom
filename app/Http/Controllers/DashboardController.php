@@ -6,9 +6,10 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
-use Illuminate\View\View;
 use Illuminate\Http\Request;
+use App\Mail\ProductDelivered;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
 
 
 class DashboardController extends Controller
@@ -36,7 +37,7 @@ class DashboardController extends Controller
     public function orderList() {
         $orders = Order::latest()->paginate(10)->withQueryString();
         return view('admin.users.orders', compact('orders'));
-    }
+    }  
 
     public function deliever(Order $order)
     {
@@ -44,7 +45,10 @@ class DashboardController extends Controller
             'delivery_status' => 'Delivered'
         ]);
 
-        return back()->with(['message' => 'Deliverey Confirmed!']);
+        //delivery mail to user
+        Mail::to($order->user)->send(new ProductDelivered($order));
+         
+        return back()->with(['message' => 'Deliverey has been made!']);
     }
 
     public function printOrder(Order $order)

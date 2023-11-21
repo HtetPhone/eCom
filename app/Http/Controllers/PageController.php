@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\User;
+use App\Mail\OrderUp;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\Order;
 use Illuminate\Http\Request;
 use Laravel\Ui\Presets\React;
+use Illuminate\Support\Facades\Mail;
 
 class PageController extends Controller
 {
-    public function redirect() 
+    public function differ() 
     {
         $role = auth()->user()->role;
         if($role !== 'admin') {
@@ -153,6 +156,10 @@ class PageController extends Controller
             //clearing out cart
             $cart->delete();
         }
+
+        //order up mail
+        $admin = User::where('role', 'admin')->first();
+        Mail::to($admin->email)->send(new OrderUp($admin));
 
         return redirect()->route('page.index')->with(['message' => 'Order has been sumbitted! Thanks for your purchase!']);
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StripeController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::view('/order_details', 'admin.pdf');
 Route::controller(PageController::class)->group(function () {
     Route::get('/', 'index')->name('page.index');
-    Route::get('/redirect', 'redirect')->middleware(['auth', 'verified']);
+    Route::get('/redirect', 'differ')->middleware(['auth', 'verified']);
     Route::get('/products/{id}', 'singleProduct')->name('page.sproduct');
     Route::get('/search', 'search')->name('search');
     Route::get('/categorize', 'categorize')->name('categorize');
@@ -70,4 +71,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+// Auth::routes(['verify' => true]);
 require __DIR__ . '/auth.php';
