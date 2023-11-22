@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::view('/order_details', 'admin.pdf');
 Route::controller(PageController::class)->group(function () {
     Route::get('/', 'index')->name('page.index');
     Route::get('/redirect', 'differ')->middleware(['auth', 'verified']);
@@ -44,7 +43,7 @@ Route::controller(StripeController::class)->middleware('auth')->group(function (
 });
 
 //admin
-Route::controller(DashboardController::class)->middleware('auth')->prefix('dashboard')->group(function () {
+Route::controller(DashboardController::class)->middleware(['auth', 'ensure.admin'])->prefix('dashboard')->group(function () {
     Route::get('/',  'dashboard')->name('dashboard');
     Route::get('/users', 'userList')->name('users.list');
     Route::get('/orders', 'orderList')->name('orders.list');
@@ -54,10 +53,10 @@ Route::controller(DashboardController::class)->middleware('auth')->prefix('dashb
 
 
 //products
-Route::resource('/product', ProductController::class)->middleware('auth');
+Route::resource('/product', ProductController::class)->middleware(['auth', 'ensure.admin']);
 
 //categories
-Route::controller(CategoryController::class)->middleware('auth')->prefix('category')->group(function () {
+Route::controller(CategoryController::class)->middleware(['auth', 'ensure.admin'])->prefix('category')->group(function () {
     Route::get('/index', 'category_list')->name('category.list');
     Route::post('/create', 'store')->name('category.store');
     Route::get('/edit/{category:id}', 'edit')->name('category.edit');
