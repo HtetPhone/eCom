@@ -38,18 +38,29 @@
                     </form>
 
                     <div class="ms-auto d-flex align-items-center">
+                        @auth
+                        <a href="{{ route('user.order') }}" class="btn btn-sm btn-outline-dark me-4 position-relative">
+                            Order
+                            @if(request()->user()->orders()->where('delivery_status', 'processing')->count() > 0)
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ request()->user()->orders()->where('delivery_status', 'processing')->count() }}
+                                </span>
+                            @endif
+                        </a>
+                        @endauth
+
                         <a href="{{ route('checkout') }}" class="btn btn-sm btn-outline-dark position-relative">
                             <i class="bi bi-cart"></i>
                             @auth
-                                @if (App\Models\Cart::where('user_id', auth()->id())->get()->count() > 0)
+                                @if (request()->user()->carts()->count() > 0)
                                     <span
                                         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        {{ App\Models\Cart::where('user_id', auth()->id())->get()->count() }}
+                                        {{ request()->user()->carts()->count() }}
                                     </span>
                                 @endif
                             @endauth
                         </a>
-
                         @guest
                             <div class="d-flex ms-2 align-items-center">
                                 <a href="{{ route('login') }}" class="btn btn-info btn-sm">Login</a>

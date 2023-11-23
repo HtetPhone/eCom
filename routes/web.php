@@ -33,6 +33,8 @@ Route::controller(PageController::class)->group(function () {
         Route::delete('/checkout/{cart:id}/remove', 'removeCart')->name('remove.cart');
         Route::get('/clear-cart', 'clearCart')->name('clear.cart');
         Route::get('/payment/cash-on', 'cashOn')->name('cash.on');
+        Route::get('/user/order', 'userOrder')->name('user.order');
+        Route::post('/user/{order:id}/order', 'cancelOrder')->name('cancel.order');
     });
 });
 

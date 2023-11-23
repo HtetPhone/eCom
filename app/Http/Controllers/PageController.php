@@ -164,4 +164,16 @@ class PageController extends Controller
         return redirect()->route('page.index')->with(['message' => 'Order has been sumbitted! Thanks for your purchase!']);
     }
 
+    //to show user's orders
+    public function userOrder() {
+        $orders = request()->user()->orders()->where('delivery_status', 'processing')->latest()->get();
+        // return $orders;
+        return view('user-order', compact('orders'));
+    }
+
+    public function cancelOrder(Order $order) {
+        $this->authorize('delete', $order);
+        $order->delete();
+        return back()->with(['message' => 'Your Order has been cancelled']);        
+    }
 }
