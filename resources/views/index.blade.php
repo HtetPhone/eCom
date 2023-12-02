@@ -2,7 +2,7 @@
 
 @section('content')
     @if (request()->search)
-        <div class="my-4 d-flex justify-content-between  w-50 p-2 rounded align-items-center shadow">
+        <div class="my-4 d-flex justify-content-between w-50 p-2 rounded align-items-center shadow">
             <p class="fw-semibold mb-0"> Search results by <span class="text-info">{{ request()->search }}</span> </p>
             <a href="{{ route('page.index') }}" class="btn btn-sm ms-4 btn-light "> <i
                     class="bi bi-x-circle-fill text-danger fs-6"></i> Clear </a>
@@ -17,11 +17,11 @@
         </div>
     @endif
     </div>
-    <div class="row row-cols-5 gx-3 align-items-end ">
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 gx-md-3 gx-lg-4 flex-wrap mx-auto">
         @forelse ($products as $product)
-            <div class="col mb-5">
+            <div class="mb-5">
                 <a href="{{ route('page.sproduct', $product->id) }}" class="text-decoration-none">
-                    <div class="card product-card" style="width: 80%; min-height: 280px">
+                    <div class="card product-card mx-auto" style="width: 100%; min-height: 280px">
                         <img style="height:160px" src="{{ asset('images/' . $product->img) }}" class="card-img-top"
                             alt="...">
                         <div class="card-body">

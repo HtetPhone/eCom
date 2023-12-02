@@ -30,7 +30,7 @@
                     </ul>
 
                     <!-- search -->
-                    <form class="d-flex" method="GET" action="{{ route('search') }}" role="search"
+                    <form class="d-flex my-3 my-lg-0" method="GET" action="{{ route('search') }}" role="search"
                         style="width: 50%;">
                         <input class="form-control me-2" name="search" type="search" placeholder="Search"
                             aria-label="Search">
