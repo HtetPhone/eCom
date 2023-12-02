@@ -37,10 +37,7 @@ class PageController extends Controller
     public function singleProduct(Product $id) 
     {
         $product = $id;
-        $comments = Comment::latest()->get();
-        $replies = Reply::latest()->get();
-        $cReplies = Reply::latest()->get();
-        return view('single-product', compact('product', 'comments', 'replies', 'cReplies'));
+        return view('single-product', compact('product'));
     }
 
     public function search(Request $request) 

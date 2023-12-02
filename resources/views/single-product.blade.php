@@ -64,5 +64,7 @@
 
     @vite(['/resources/js/addToCart.js'])
     
-    @include('partials/_comment-reply')
+    <!--comments & replies here -->
+    @include('partials._comment-reply')
+
 @endsection
