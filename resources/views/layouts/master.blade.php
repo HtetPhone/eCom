@@ -21,7 +21,7 @@
 
     @include('partials._footer')
 
-    @vite('resources/js/custom.js')
+    @vite(['resources/js/custom.js', 'resources/js/app.js'])
 </body>
 
 </html>

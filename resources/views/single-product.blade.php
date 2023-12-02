@@ -42,8 +42,8 @@
                 <span class="btn-group w-auto border border-2 ms-2">
                     <button id="minus" class="btn btn-dark"> <i class="bi-dash"></i> </button>
                     @csrf
-                    <input type="text" value="1" id="quantity" readonly name="quantity" style="width:55px;outline:none"
-                        class="ps-3 quantity" min="1" class="border-0">
+                    <input type="text" value="1" id="quantity" readonly name="quantity"
+                        style="width:55px;outline:none" class="ps-3 quantity" min="1" class="border-0">
                     <button id="plus" class="btn btn-dark"> <i class="bi-plus"></i> </button>
                 </span>
             </form>
@@ -52,7 +52,7 @@
             @enderror
             </p>
             <div class="d-flex my-3 mt-4">
-                <form action="{{route('buy.now',$product->id)}}" method="POST">
+                <form action="{{ route('buy.now', $product->id) }}" method="POST">
                     @csrf
                     <input type="hidden" name="quantity" id="bQuantity" value="1" min=1>
                     <button class="btn btn-outline-warning">Buy Now</button>
@@ -62,5 +62,7 @@
         </div>
     </div>
 
-    @vite('/resources/js/addToCart.js')
+    @vite(['/resources/js/addToCart.js'])
+    
+    @include('partials/_comment-reply')
 @endsection

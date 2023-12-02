@@ -8,6 +8,8 @@ use App\Mail\OrderUp;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Comment;
+use App\Models\Reply;
 use Illuminate\Http\Request;
 use Laravel\Ui\Presets\React;
 use Illuminate\Support\Facades\Mail;
@@ -26,7 +28,7 @@ class PageController extends Controller
 
     public function index() 
     {
-        $products = Product::latest('id')->paginate(10)->withQueryString();
+        $products = Product::latest('id')->paginate(20)->withQueryString();
         return view('index', [
             'products' => $products,
         ]);
@@ -35,7 +37,10 @@ class PageController extends Controller
     public function singleProduct(Product $id) 
     {
         $product = $id;
-        return view('single-product', compact('product'));
+        $comments = Comment::latest()->get();
+        $replies = Reply::latest()->get();
+        $cReplies = Reply::latest()->get();
+        return view('single-product', compact('product', 'comments', 'replies', 'cReplies'));
     }
 
     public function search(Request $request) 
@@ -48,7 +53,7 @@ class PageController extends Controller
             ->orWhere('price', 'like', '%'. $search .'%')
             ->orWhere('d_price', 'like', '%'. $search .'%');
         }) 
-        ->get();
+        ->paginate(20)->withQueryString();
         
         return view('index', compact('products'));
     }
@@ -59,7 +64,7 @@ class PageController extends Controller
             $query->where('name', 'like' ,'%'. $key .'%');
         }) 
         ->first();  
-        $products = $category->products;
+        $products = $category->products()->paginate(20)->withQueryString();
 
         return view('index', compact('products'));
     }
@@ -95,7 +100,7 @@ class PageController extends Controller
 
         if(Cart::where('product_id', $product->id)->exists()) {
             $cart = Cart::where('product_id', $product->id)->first();
-            $newQuantity = $cart->quantity + $request->quantity;
+            $newQuantity = $cart->quantity + $request->quantity; 
             $cart->update([
                 'quantity' => $newQuantity
             ]);

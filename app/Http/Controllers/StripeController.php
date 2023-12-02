@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Stripe\Charge;
 use Stripe\Stripe;
 use App\Models\Cart;
+use App\Models\User;
+use App\Mail\OrderUp;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 class StripeController extends Controller
@@ -85,6 +88,10 @@ class StripeController extends Controller
             //clearing out cart
             $cart->delete();
         }
+
+        //order up mail
+        $admin = User::where('role', 'admin')->first();
+        Mail::to($admin->email)->send(new OrderUp($admin));
 
         return redirect()->route('page.index')->with(['message' => 'Order has been sumbitted! Thanks for your purchase!']);
      }

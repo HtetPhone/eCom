@@ -1,7 +1,14 @@
 @extends('layouts.dash-layout')
 
 @section('content')
-    <h4>Users List</h4>
+    <div class="d-flex">
+        <h4>Users List</h4>
+        <div class="ms-auto">
+            <a href="{{route('users.create')}}" class="btn btn-outline-dark">
+                <i class="bi bi-plus-circle"></i> Add More User
+            </a>
+        </div>
+    </div>
     <hr>
 
     <table class="table table-striped table-hover">
@@ -11,6 +18,7 @@
                 <th scope="col">Name</th>
                 <th scope="col">Role</th>
                 <th>Order</th>
+                <th>Options</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +37,17 @@
                    <td>
                         {{$user->orders->count()}} {{Str::plural('order', $user->orders->count())}}
                    </td>
+
+                   <td>
+                        <div class="btn-group">
+                            <a href="{{route('users.edit', $user)}}" class="btn btn-sm btn-info">Edit</a>
+                            <button onclick="return confirm('are u sure to remove this user');" form="removeUser{{$user->id}}" class="btn btn-sm btn-danger">Remove</button>
+                        </div>
+                        <form method="post" action="{{route('users.remove', $user->id)}}" id="removeUser{{$user->id}}">
+                            @csrf
+                            @method('delete')
+                        </form>
+                   </td>
                 </tr>
             @empty
                 <tr>
@@ -39,4 +58,8 @@
             @endforelse
         </tbody>
     </table>
+
+    <div>
+        {{ $users->links() }}
+    </div>
 @endsection

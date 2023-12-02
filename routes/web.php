@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\StripeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -48,9 +50,17 @@ Route::controller(StripeController::class)->middleware('auth')->group(function (
 Route::controller(DashboardController::class)->middleware(['auth', 'ensure.admin'])->prefix('dashboard')->group(function () {
     Route::get('/',  'dashboard')->name('dashboard');
     Route::get('/users', 'userList')->name('users.list');
+    Route::get('/users/create', 'userCreate')->name('users.create');
+    Route::post('/users/create', 'userStore');
+    Route::get('/users/{user:id}/edit', 'userEdit')->name('users.edit');
+    Route::put('/users/{user:id}/', 'userUpdate')->name('users.update');
+    Route::delete('/users/{user:id}/', 'userRemove')->name('users.remove');
+
     Route::get('/orders', 'orderList')->name('orders.list');
     Route::put('/orders/{order:id}/deliever', 'deliever')->name('order.deliever');
     Route::get('/orders/{order:id}/print', 'printOrder')->name('print.order');
+    Route::get('/orders/search', 'orderSearch')->name('order.search');
+    Route::get('/orders/categorize', 'orderCategorize')->name('order.categorize');
 });
 
 
@@ -66,10 +76,21 @@ Route::controller(CategoryController::class)->middleware(['auth', 'ensure.admin'
     Route::delete('/{category:id}', 'destroy')->name('category.destroy');
 });
 
+//profile
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+//comment
+Route::controller(CommentController::class)->prefix('comment')->middleware(['auth'])->group(function() {
+    Route::post('/store/{product:id}', 'store')->name('comment.store');
+});
+
+//reply
+Route::controller(ReplyController::class)->prefix('reply')->middleware(['auth'])->group(function() {
+    Route::post('/store', 'store')->name('reply.store');
 });
 
 

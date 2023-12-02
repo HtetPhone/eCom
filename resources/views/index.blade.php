@@ -19,7 +19,7 @@
     </div>
     <div class="row row-cols-5 gx-3 align-items-end ">
         @forelse ($products as $product)
-            <div class="col">
+            <div class="col mb-5">
                 <a href="{{ route('page.sproduct', $product->id) }}" class="text-decoration-none">
                     <div class="card product-card" style="width: 80%; min-height: 280px">
                         <img style="height:160px" src="{{ asset('images/' . $product->img) }}" class="card-img-top"
@@ -41,6 +41,10 @@
         @empty
             <p class="text-danger fw-semibold text-center mx-auto">"Nothing Here"</p>
         @endforelse
+
+        <div class="mb-5">
+            {{ $products->links() }} 
+        </div>
     </div>
 
 @endsection
